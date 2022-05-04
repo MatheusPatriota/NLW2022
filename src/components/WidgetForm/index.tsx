@@ -3,7 +3,10 @@ import bugImageUrl from "../../assets/Bug.svg";
 import ideaImageUrl from "../../assets/Idea.svg";
 import thoughtImageUrl from "../../assets/Thought.svg";
 import { useState } from "react";
-const feedbackTypes = {
+import { FeedbackTypeStep } from "./Steps/FeedbackTypeStep";
+import { FeedbackContentStep } from "./Steps/FeedbackContentStep";
+
+export const feedbackTypes = {
   BUG: {
     title: "Problema",
     img: {
@@ -27,34 +30,24 @@ const feedbackTypes = {
   },
 };
 
-type feedbackType = keyof typeof feedbackTypes;
+export type FeedbackType = keyof typeof feedbackTypes;
 
 export function WidgetForm() {
-  const [feedbackType, setFeedbackType] = useState<feedbackType | null>(null);
+  const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null);
+
+  function handleResetFeedbackType() {
+    setFeedbackType(null);
+  }
 
   return (
     <div className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg w-[calc(100vw-2rem)] md:w-auto">
-      <header>
-        <CloseButton />
-        <span> Deixe seu feedback</span>
-      </header>
       {!feedbackType ? (
-        <div className="flex py-8 gap-2 w-full">
-          {Object.entries(feedbackTypes).map(([key, value]) => {
-            return (
-              <button
-                key={key}
-                onClick={() => setFeedbackType(key as feedbackType)}
-                className=" bg-zinc-800 py-5 rounded-lg flex-1 w-24 flex flex-col items-center gap-2 border-2 border-transparent hover:border-brand-500 focus:border-brand-500 focus:outline"
-              >
-                <img src={value.img.source} alt={value.img.alt} />
-                <span>{value.title}</span>
-              </button>
-            );
-          })}
-        </div>
+        <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
       ) : (
-        <p>Hello World</p>
+        <FeedbackContentStep
+          feedbackType={feedbackType}
+          onFeedbackRestartRequested={handleResetFeedbackType}
+        />
       )}
 
       <footer className="text-xs">
